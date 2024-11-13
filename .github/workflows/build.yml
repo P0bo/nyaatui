@@ -1,0 +1,31 @@
+name: Build and Release nyaa
+
+on:
+  workflow_dispatch: # Allows you to manually trigger the workflow
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v2
+
+    - name: Set up Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: x86_64-pc-windows-msvc
+        override: true
+
+    - name: Install dependencies
+      run: rustup target add x86_64-pc-windows-msvc
+
+    - name: Build the project
+      run: cargo build --release --target x86_64-pc-windows-msvc
+
+    - name: Archive build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: nyaa.exe
+        path: target/x86_64-pc-windows-msvc/release/nyaa.exe
